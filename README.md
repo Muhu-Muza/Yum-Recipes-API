@@ -15,7 +15,15 @@ A Flask API for the Yes-Recipes that handles:
    ```
     $ pip install virtualenv  
     $ virtualenv <environment-name>  
+   ```  
+   Then navigate into the environment youve created and activate scripts:    
+    e.g. If my environment is called env. I would do something like this.  
+    
    ```   
+    $ cd env/Scripts/activate   
+    $ cd ..   
+   ```   
+    
  #### 2. Next you'll want to install the dependencies:  
    
    for windows use:   
@@ -38,7 +46,7 @@ A Flask API for the Yes-Recipes that handles:
     $ flask db upgrade   
     
    ```
-  ##### 4. Set the envirnonment variables and run the app:   
+  #### 4. Set the envirnonment variables and run the app:   
    - For windows :   
    ```
    $ set FLASK_DEBUG = 1   
