@@ -20,7 +20,8 @@ A Flask API for the Yes-Recipes that handles:
     e.g. If my environment is called env. I would do something like this.  
     
    ```   
-    $ cd env/Scripts/activate   
+    $ cd env   
+    $ Scripts\activate   
     $ cd ..   
    ```   
     
