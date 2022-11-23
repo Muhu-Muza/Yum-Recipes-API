@@ -23,15 +23,14 @@ def create_category(current_user):
 
     try:
         data = category_schema.load(data)
-        title = data['title'],
-        description = data['description'],
+
         user_id = current_user.id
    
-
-        new_category = Category(title = title,
-                                description = description,
+        new_category = Category(title = data['title'],
+                                description = data['description'],
                                 user_id = user_id
                                 )
+        print(new_category)
         db.session.add(new_category)
         db.session.commit()
 

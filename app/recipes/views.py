@@ -20,7 +20,7 @@ def create_recipe(current_user, id):
     try:    
         data = recipe_schema.load(data)
   
-        category = Category.query.filter_by(id = id).first()
+        category = Category.query.filter_by(user_id = current_user.id, id = id).first()
         if category:
             title = data["title"]
             ingredients = data["ingredients"]
@@ -38,44 +38,43 @@ def create_recipe(current_user, id):
             
             return jsonify({'message': 'Recipe with that name already Exists!'}), 409
 
+        return jsonify({"message": "Invalid request !"}), 400
+
     except ValidationError as err:
         return err.messages, 422
 
     
-@recipe.route('/recipes', methods=['GET'])
-@token_required
-def get_all_recipes(current_user):
-    """ for fetching all recipes available"""
-    recipes = Recipe.query.all()
+# @recipe.route('/<category_id>/recipes', methods=['GET'])
+# @token_required
+# def get_all_recipes(current_user, category_id):
+#     """ for fetching all recipes available to a category"""
+#     category = Category.query.filter_by(user_id = current_user.id, id = category_id)
+#     if category:
+#         recipes = Recipe.query.filter_by(category = category_id).all()
 
-    recipe_schema = RecipeSchema(many = True)
-    data = recipe_schema.dump(recipes)
-    return jsonify({"recipes": data}), 200
+#         recipe_schema = RecipeSchema(many = True)
+#         data = recipe_schema.dump(recipes)
+#         return jsonify({"recipes": data}), 200
+
+#     return jsonify({"messages": "Invalid request !"}), 400
    
 
-@recipe.route('/view-recipes/<id>', methods=['GET'])
+@recipe.route('/<category_id>/view-recipes', methods=['GET'])
 @token_required
-def get_recipes_by_categories(current_user, id):
+def get_recipes_by_categories(current_user, category_id):
     """ for fetching recipes available to a particular category"""
     
     page = request.args.get('page', 1, type = int)
     per_page = request.args.get('per_page', 5, type = int)
 
-    category = Category.query.filter_by(id = id).first()
+    category = Category.query.filter_by(user_id = current_user.id, id = category_id).first()
+
     if category:
-
         recipes = Recipe.query.filter_by(
-                    category = id).paginate(page = page, per_page = per_page)
-        
-        output = []
+                    category = category_id).paginate(page = page, per_page = per_page)
 
-        for recipe in recipes.items:
-            recipe_data = {}
-            recipe_data['title'] = recipe.title
-            recipe_data['category'] = recipe.category
-            recipe_data['ingredients'] = recipe.ingredients
-            recipe_data['instructions'] = recipe.instructions
-            output.append(recipe_data)
+        recipe_schema = RecipeSchema(many = True)
+        data = recipe_schema.dump(recipes)
 
         meta = {
             "page": recipes.page,
@@ -87,66 +86,79 @@ def get_recipes_by_categories(current_user, id):
             'has_prev': recipes.has_prev,
         }
 
-    return jsonify({'recipes': output, 'meta': meta}), 200
+        return jsonify({'recipes': data, 'meta': meta}), 200
+
+    return jsonify({"messages": "Invalid request !"})
 
 
-@recipe.route('/recipes/<id>', methods=['GET'])
+@recipe.route('/<category_id>/recipes/<id>', methods=['GET'])
 @token_required
-def get_particular_recipe(current_user, id):
+def get_particular_recipe(current_user, id, category_id):
     """for getting a particular recipe"""
-    recipe = Recipe.query.filter_by(id=id).first()
+    category = Category.query.filter_by(user_id = current_user.id, id = category_id)  
+    if category:
+        recipe = Recipe.query.filter_by(id = id, category = category_id).first()
 
-    if recipe:
-        recipe_schema = RecipeSchema()
-        data = recipe_schema.dump(recipe)
-        return jsonify({"recipe": data}), 200
+        if recipe:
+            recipe_schema = RecipeSchema()
+            data = recipe_schema.dump(recipe)
+            return jsonify({"recipe": data}), 200
+        
+        return jsonify({'message': 'No recipe found!'}), 404
     
-    return jsonify({'message': 'No recipe found!'}), 404
+    return jsonify({"message":"Invalid request !"}), 400
 
 
-@recipe.route('/recipes/<id>', methods=['PUT'])
+@recipe.route('/<category_id>/recipes/<id>', methods=['PUT'])
 @token_required
-def edit_recipe(current_user, id):
+def edit_recipe(current_user, id, category_id):
     """For updating a particular recipe"""
-    recipe = Recipe.query.get(id)
+    category = Category.query.filter_by(user_id = current_user.id, id = category_id)  
+    if category:
+        recipe = Recipe.query.get(id)
 
-    if not recipe:
-        return jsonify({'message': 'No recipe found!'}), 404
+        if not recipe:
+            return jsonify({'message': 'No recipe found!'}), 404
 
-    data = request.get_json()
-    recipe_schema = RecipeSchema()
+        data = request.get_json()
+        recipe_schema = RecipeSchema()
 
-    try:
-        data = recipe_schema.load(data)
+        try:
+            data = recipe_schema.load(data)
 
-        title = data['title']
-        category = data['category']
-        ingredients = data['ingredients']
-        instructions = data['instructions']
+            title = data['title']
+            ingredients = data['ingredients']
+            instructions = data['instructions']
 
-        recipe.title = title
-        recipe.category = category
-        recipe.ingredients = ingredients
-        recipe.instructions = instructions
+            recipe.title = title
+            recipe.ingredients = ingredients
+            recipe.instructions = instructions
 
-        db.session.commit()
-        result = recipe_schema.dump(Recipe.query.filter_by(title = title).first())
-        return jsonify({'message': 'Recipe has been Updated!', "Recipe": result}), 200
+            db.session.commit()
+            result = recipe_schema.dump(Recipe.query.filter_by(title = title).first())
+            return jsonify({'message': 'Recipe has been Updated!', "Recipe": result}), 200
 
-    except ValidationError as err:
-        return err.messages, 422
+        except ValidationError as err:
+            return err.messages, 422
+
+    return jsonify({"message": "Invalid request !"}), 400
 
 
-@recipe.route('/recipes/<id>', methods=['DELETE'])
+@recipe.route('/<category_id>/recipes/<id>', methods=['DELETE'])
 @token_required
-def delete_recipe(current_user, id):
+def delete_recipe(current_user, id, category_id):
     """Delete a particular recipe instance"""
-    recipe = Recipe.query.filter_by(id=id).first()
+    category = Category.query.filter_by(user_id = current_user.id, id = category_id)  
 
-    if not recipe:
-        return jsonify({'message': 'No recipe found!'}), 404
+    if category:
+        recipe = Recipe.query.filter_by(id=id).first()
 
-    db.session.delete(recipe)
-    db.session.commit()
+        if not recipe:
+            return jsonify({'message': 'No recipe found!'}), 404
 
-    return jsonify({'message': 'Recipe deleted!'}), 200
+        db.session.delete(recipe)
+        db.session.commit()
+
+        return jsonify({'message': 'Recipe deleted!'}), 200
+
+    return jsonify({"message": "Invalid request !"}), 400
