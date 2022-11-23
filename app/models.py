@@ -1,5 +1,6 @@
 from datetime import datetime
-from .extentions import db
+from app.extentions import db
+from marshmallow import Schema, fields, validate
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -14,12 +15,15 @@ class User(db.Model):
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Text(80), nullable=False)
+    title = db.Column(db.Text(80), nullable=False, unique=True)
     ingredients = db.Column(db.String())
     instructions = db.Column(db.String())
     category = db.Column(db.Integer, db.ForeignKey('category.id'))
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
+
+    def __repr__(self):
+        return f"{self.title}, {self.category}"
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,3 +33,32 @@ class Category(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
+
+    def __repr__(self):
+        return f"{self.title}"
+
+class UserSchema(Schema):
+    id = fields.Int(dump_only = True)
+    firstname = fields.Str(required = True, validate = validate.Length(min=3))
+    lastname = fields.Str(required = True, validate = validate.Length(min=3))
+    username = fields.Str(required = True, validate = validate.Length(min=4))
+    email = fields.Email(required = True, validate = validate.Email())
+    password = fields.Str(required = True, validate = validate.Length(min=5))
+
+class CategorySchema(Schema):
+    id = fields.Int(dump_only = True)
+    title = fields.Str(required = True, unique = True, validate = validate.Length(min=4))
+    description = fields.Str(required = True, validate = validate.Length(min=5))
+    user_id = fields.Int(dump_only = True)
+    created_at = fields.DateTime(dump_only=True)
+    updated_at = fields.DateTime(dump_only=True)
+class RecipeSchema(Schema):
+    id = fields.Int(dump_only = True)
+    title = fields.Str(required = True, unique = True, validate = validate.Length(min=3))
+    ingredients = fields.Str(required = True, validate = validate.Length(min=4))
+    instructions = fields.Str(required = True, validate = validate.Length(min=4))
+    category = fields.Int(dump_only = True)
+    created_at = fields.DateTime(dump_only=True)
+    updated_at = fields.DateTime(dump_only=True)
+
+

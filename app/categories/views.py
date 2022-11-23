@@ -1,86 +1,107 @@
 from flask import Blueprint, request, jsonify
-from ..extentions import db
-from ..models import Category
-from ..auth.views import token_required
+from app.extentions import db
+from app.models import Category, CategorySchema
+from app.auth.views import token_required
+from marshmallow import ValidationError
 
 category = Blueprint('category', __name__)
-
 
 
 @category.route('/categories', methods=['POST'])
 @token_required
 def create_category(current_user):
     """for adding a new category"""
+
     data = request.get_json()
+    category_schema = CategorySchema()
+   
+    title = data['title']
+    category = Category.query.filter_by(user_id = current_user.id, title = title).first()
 
-    new_category = Category(title=data['title'],
-                            description=data['description']
-                            )
-    db.session.add(new_category)
-    db.session.commit()
+    if category:
+        return jsonify({"message": "Category already exists !"}), 409
 
-    return jsonify({'message': "Category created!"}), 201
+    try:
+        data = category_schema.load(data)
+        title = data['title'],
+        description = data['description'],
+        user_id = current_user.id
+   
 
+        new_category = Category(title = title,
+                                description = description,
+                                user_id = user_id
+                                )
+        db.session.add(new_category)
+        db.session.commit()
+
+        result = category_schema.dump(new_category)
+        return jsonify({'message': "Category created!", "category": result}), 201
+
+    except ValidationError as err:
+        return err.messages, 422
 
 @category.route('/categories', methods=['GET'])
 @token_required
 def get_all_categories(current_user):
     """ for fetching all categories available"""
-    categories = Category.query.all()
+    categories = Category.query.filter_by(user_id = current_user.id).all()
 
-    output = []
-
-    for category in categories:
-        category_data = {}
-        category_data['title'] = category.title
-        category_data['description'] = category.description
-        output.append(category_data)
-
-    return jsonify({'categories': output}), 200
+    category_schema = CategorySchema(many = True)
+    data = category_schema.dump(categories)
+    return jsonify({"categories": data}), 200
 
 
 @category.route('/categories/<id>', methods=['GET'])
 @token_required
-def get_one_category(current_user, id):
+def get_particular_category(current_user, id):
     """for getting a particular category"""
-    category = Category.query.filter_by(id=id).first()
+    category = Category.query.filter_by(user_id = current_user.id, id=id).first()
 
     if category:
-        category_data = {}
-        category_data['title'] = category.title
-        category_data['description'] = category.description
-
-        return jsonify(category_data)
-
-    if not category:
-        return jsonify({'message': 'No category found!'}), 404
+        category_schema = CategorySchema()
+        data = category_schema.dump(category)
+        return jsonify({"category": data}), 200
+   
+    return jsonify({'message': 'No category found!'}), 404
 
 
 @category.route('/categories/<id>', methods=['PUT'])
 @token_required
 def edit_category(current_user, id):
     """For updating a particular category"""
-    category = Category.query.get(id)
+    category = Category.query.filter_by(user_id = current_user.id, id = id).first()
 
     if not category:
         return jsonify({'message': 'No category found!'}), 404
 
-    title = request.json['title']
-    description = request.json['description']
+    data = request.get_json()
+    category_schema = CategorySchema()
 
-    category.title = title
-    category.description = description
+    try:
+        data = category_schema.load(data)
 
-    db.session.commit()
+        title = data["title"]
+        description = data["description"]
 
-    return jsonify({'message': 'Category has been Updated!'}), 200
+        category.title = title
+        category.description = description
+
+        db.session.commit()
+        result = category_schema.dump(category)
+        return jsonify({'message': 'Category has been Updated!', "category": result}), 200
+
+    except ValidationError as err:
+        return err.messages, 422
+
+    
 
 
 @category.route('/categories/<id>', methods=['DELETE'])
 @token_required
 def delete_category(current_user, id):
-    """Delete a particular category instance"""
-    category = Category.query.filter_by(id=id).first()
+    """Delete a particular category"""
+    category = Category.query.filter_by(user_id = current_user.id, id=id).first()
 
     if not category:
         return jsonify({'message': 'No category found!'}), 404

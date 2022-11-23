@@ -1,9 +1,9 @@
 from flask import Flask
-from .extentions import db
+from app.extentions import db
 
-from .auth.views import user
-from .categories.views import category
-from .recipes.views import recipe
+from app.auth.views import user
+from app.categories.views import category
+from app.recipes.views import recipe
 from flask_migrate import Migrate
 
 
