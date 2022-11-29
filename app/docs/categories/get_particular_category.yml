@@ -1,0 +1,17 @@
+
+tags:
+  - Categories
+summary: Get a particular category by it's id
+parameters:
+  - in: path
+    name: id
+    required: true
+    type: integer
+    description: the id of the category to be viewed
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description:  when a category is successfully returned
+  404:
+    description: when a Category not found

@@ -1,0 +1,23 @@
+
+tags:
+  - Authentication
+summary: User Login 
+parameters:
+  - in: body
+    name: body
+    required: true
+    type: string
+    description: user login with parameters username and password
+    schema:
+      type: object
+      example: {
+              "username": "muhu",
+              "password": "********"
+              }
+responses:
+  401: 
+    description: When a user cannot be verified  
+  200:
+    description: When a user is verified and a token returned
+
+  

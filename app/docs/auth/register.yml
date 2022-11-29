@@ -1,0 +1,28 @@
+
+tags:
+  - Authentication
+summary: User Signup 
+parameters:
+  - in: body
+    name: body
+    required: true
+    type: string
+    description: register a new user with parameters firstname, lastname, username, email, and password
+    schema:
+      type: object
+      example: {
+                "firstname": "Muhumuza", 
+                "lastname": "Ivan",
+                "username": "muhu",
+                "email": "muhumuza@email.com",
+                "password": "********"
+                }
+responses:
+  201: 
+    description: When a user has successfully signed up
+  409: 
+    description: When a username or email already exists
+  422: 
+    description: When there is a validation error
+
+  

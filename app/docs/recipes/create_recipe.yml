@@ -1,0 +1,31 @@
+
+tags:
+  - Recipes
+summary: Create a recipe
+description: This is a simple route to create a recipe
+parameters:
+  - in: path
+    name: category_id
+    required: true
+    type: integer
+    description: the id of the category to contain the newly created recipe
+  - name: body
+    in: body
+    required: true
+    description: Accepts data input in json
+    schema:
+      type: object
+      example: {"title": "Vegetable pie",
+                "ingredients": "Cucumber, cabbage, lettuce", 
+                "instructions": "chop to tiny bits, sizzle with a little vinegar and serve"}
+security:
+  - TokenHeader: []
+responses:
+  201:
+    description: When a recipe has been created successfully
+  409:
+    description: When a recipe name already exists  
+  422:
+    description: When there is Validation error
+  400:
+    description: When a category_id is not valid or no recipe data provided

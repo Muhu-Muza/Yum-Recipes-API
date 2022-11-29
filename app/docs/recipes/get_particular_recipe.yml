@@ -1,0 +1,24 @@
+
+tags:
+  - Recipes
+summary: Get a particular recipe by it's id
+parameters:
+  - in: path
+    name: category_id
+    required: true
+    type: integer
+    description: the id of the category to containing the recipes
+  - in: path
+    name: id
+    required: true
+    type: integer
+    description: the id of the recipe to be viewed
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description:  when a recipe is successfully returned
+  404:
+    description: when a recipe not found
+  400:
+    description: When no category

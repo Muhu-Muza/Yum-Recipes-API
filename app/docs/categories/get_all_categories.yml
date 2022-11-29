@@ -1,0 +1,24 @@
+
+tags:
+  - Categories
+summary: Get all categories / search for a category by it's name
+parameters:
+  - in: query
+    name: q
+    type: string
+    description: Query a category by it's name
+  - in: query
+    name: page
+    type: integer
+    description: The page to be displayed
+  - in: query
+    name: per page
+    type: integer
+    description: The number of items to display per page
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description:  When a category has been got successfully
+  404:
+    description: when a Category is not found

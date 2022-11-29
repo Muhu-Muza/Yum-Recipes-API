@@ -1,0 +1,19 @@
+
+tags:
+  - Admin
+summary: Get a particular user by their id
+parameters:
+  - in: path
+    name: id
+    required: true
+    type: integer
+    description: the id of the user to be retrieved
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description:  when a user is successfully retrieved
+  404:
+    description: when a user is not found
+  401:
+    description: When a user is not authorised to retrieve users

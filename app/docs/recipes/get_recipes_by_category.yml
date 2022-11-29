@@ -1,0 +1,29 @@
+
+tags:
+  - Recipes
+summary: Get all recipes in a category / search for a recipe by it's name
+parameters:
+  - in: path
+    name: category_id
+    required: true
+    type: integer
+    description: the id of the category to containing the recipes
+  - in: query
+    name: q
+    type: string
+    description: Query a recipe by it's name
+  - in: query
+    name: page
+    type: integer
+    description: The page to be displayed
+  - in: query
+    name: per page
+    type: integer
+    description: The number of items to display per page
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description:  When a recipe has been got successfully
+  404:
+    description: when a recipe is not found

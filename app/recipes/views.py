@@ -3,13 +3,16 @@ from app.extentions import  db
 from app.models import Recipe, Category, RecipeSchema
 from app.auth.views import token_required
 from marshmallow import ValidationError
+from sqlalchemy import desc
+from flasgger import swag_from
 
 recipe = Blueprint('recipe', __name__)
 
 
-@recipe.route('/recipes/<id>', methods=['POST'])
+@recipe.route('/<category_id>/recipes', methods=['POST'])
+@swag_from('/app/docs/recipes/create_recipe.yml')
 @token_required
-def create_recipe(current_user, id):
+def create_recipe(current_user, category_id):
     """for adding a new recipe"""
     data = request.get_json()
     recipe_schema = RecipeSchema()
@@ -20,12 +23,12 @@ def create_recipe(current_user, id):
     try:    
         data = recipe_schema.load(data)
   
-        category = Category.query.filter_by(user_id = current_user.id, id = id).first()
+        category = Category.query.filter_by(user_id = current_user.id, id = category_id).first()
         if category:
-            title = data["title"]
+            title = data["title"].capitalize()
             ingredients = data["ingredients"]
             instructions = data["instructions"]
-            category = id
+            category = category_id
 
             check_recipe = Recipe.query.filter_by(title = title).first()
             if not check_recipe:
@@ -42,36 +45,35 @@ def create_recipe(current_user, id):
 
     except ValidationError as err:
         return err.messages, 422
-
-    
-# @recipe.route('/<category_id>/recipes', methods=['GET'])
-# @token_required
-# def get_all_recipes(current_user, category_id):
-#     """ for fetching all recipes available to a category"""
-#     category = Category.query.filter_by(user_id = current_user.id, id = category_id)
-#     if category:
-#         recipes = Recipe.query.filter_by(category = category_id).all()
-
-#         recipe_schema = RecipeSchema(many = True)
-#         data = recipe_schema.dump(recipes)
-#         return jsonify({"recipes": data}), 200
-
-#     return jsonify({"messages": "Invalid request !"}), 400
    
 
-@recipe.route('/<category_id>/view-recipes', methods=['GET'])
+@recipe.route('/<category_id>/recipes', methods=['GET'])
+@swag_from('/app/docs/recipes/get_recipes_by_category.yml')
 @token_required
 def get_recipes_by_categories(current_user, category_id):
     """ for fetching recipes available to a particular category"""
     
     page = request.args.get('page', 1, type = int)
     per_page = request.args.get('per_page', 5, type = int)
+    q = request.args.get('q', "").capitalize()
 
     category = Category.query.filter_by(user_id = current_user.id, id = category_id).first()
 
     if category:
         recipes = Recipe.query.filter_by(
-                    category = category_id).paginate(page = page, per_page = per_page)
+                    category = category_id).order_by(desc('created_at')).paginate(page = page, per_page = per_page)
+
+        if q:
+            
+            for recipe in recipes:
+                if q in recipe.title:
+                    recipe_schema = RecipeSchema()
+                    data = recipe_schema.dump(recipe)
+
+                    return jsonify({"recipe": data}), 200
+
+            else:
+                return jsonify({"message": "Recipe not found ! Try a different spelling !" }), 404
 
         recipe_schema = RecipeSchema(many = True)
         data = recipe_schema.dump(recipes)
@@ -92,6 +94,7 @@ def get_recipes_by_categories(current_user, category_id):
 
 
 @recipe.route('/<category_id>/recipes/<id>', methods=['GET'])
+@swag_from('/app/docs/recipes/get_particular_recipe.yml')
 @token_required
 def get_particular_recipe(current_user, id, category_id):
     """for getting a particular recipe"""
@@ -110,6 +113,7 @@ def get_particular_recipe(current_user, id, category_id):
 
 
 @recipe.route('/<category_id>/recipes/<id>', methods=['PUT'])
+@swag_from('/app/docs/recipes/edit_recipe.yml')
 @token_required
 def edit_recipe(current_user, id, category_id):
     """For updating a particular recipe"""
@@ -126,7 +130,7 @@ def edit_recipe(current_user, id, category_id):
         try:
             data = recipe_schema.load(data)
 
-            title = data['title']
+            title = data['title'].capitalize()
             ingredients = data['ingredients']
             instructions = data['instructions']
 
@@ -145,6 +149,7 @@ def edit_recipe(current_user, id, category_id):
 
 
 @recipe.route('/<category_id>/recipes/<id>', methods=['DELETE'])
+@swag_from('/app/docs/recipes/delete_recipe.yml')
 @token_required
 def delete_recipe(current_user, id, category_id):
     """Delete a particular recipe instance"""

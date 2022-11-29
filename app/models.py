@@ -23,7 +23,7 @@ class Recipe(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
 
     def __repr__(self):
-        return f"{self.title}, {self.category}"
+        return f"< {self.title}, {self.category} >"
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,7 +35,7 @@ class Category(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=datetime.now())
 
     def __repr__(self):
-        return f"{self.title}"
+        return f"< {self.title} >"
 
 class UserSchema(Schema):
     id = fields.Int(dump_only = True)

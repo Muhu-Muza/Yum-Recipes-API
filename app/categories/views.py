@@ -3,11 +3,14 @@ from app.extentions import db
 from app.models import Category, CategorySchema
 from app.auth.views import token_required
 from marshmallow import ValidationError
+from sqlalchemy import desc
+from flasgger import swag_from
 
 category = Blueprint('category', __name__)
 
 
 @category.route('/categories', methods=['POST'])
+@swag_from('/app/docs/categories/create_category.yml')
 @token_required
 def create_category(current_user):
     """for adding a new category"""
@@ -19,39 +22,74 @@ def create_category(current_user):
     category = Category.query.filter_by(user_id = current_user.id, title = title).first()
 
     if category:
-        return jsonify({"message": "Category already exists !"}), 409
+        return jsonify({"message": "Category with that name already exists !"}), 409
 
     try:
         data = category_schema.load(data)
 
         user_id = current_user.id
    
-        new_category = Category(title = data['title'],
+        new_category = Category(title = data['title'].capitalize(),
                                 description = data['description'],
                                 user_id = user_id
                                 )
-        print(new_category)
         db.session.add(new_category)
         db.session.commit()
 
         result = category_schema.dump(new_category)
-        return jsonify({'message': "Category created!", "category": result}), 201
+        return jsonify({'message': "Category created successfully !", "category": result}), 201
 
     except ValidationError as err:
         return err.messages, 422
 
 @category.route('/categories', methods=['GET'])
+@swag_from('/app/docs/categories/get_all_categories.yml')
 @token_required
 def get_all_categories(current_user):
     """ for fetching all categories available"""
-    categories = Category.query.filter_by(user_id = current_user.id).all()
 
+    page = request.args.get('page', 1, type = int)
+    per_page = request.args.get('per_page', 5, type = int)
+    q = request.args.get('q', "").capitalize()
+    categories = Category.query.filter_by(user_id = current_user.id).order_by(desc('created_at')).paginate(page = page, per_page = per_page)
+    
+    if q:
+        for category in categories:
+            if q in category.title:
+
+                category_schema = CategorySchema()
+                data = category_schema.dump(category)
+
+                return jsonify({"category": data}), 200
+            
+        # category = Category.query.filter_by(user_id = current_user.id, title = q).first()
+        # if category:
+        #     print("category1" , category)
+        #     category_schema = CategorySchema()
+        #     data = category_schema.dump(category)
+        #     return jsonify({"category": data})
+       
+        else:
+            return jsonify({"message": "Category not found ! Try a different spelling !"}), 404
+
+ 
     category_schema = CategorySchema(many = True)
     data = category_schema.dump(categories)
-    return jsonify({"categories": data}), 200
 
+    meta = {
+            "page": categories.page,
+            'pages': categories.pages,
+            'total_count': categories.total,
+            'prev_page': categories.prev_num,
+            'next_page': categories.next_num,
+            'has_next': categories.has_next,
+            'has_prev': categories.has_prev
+        }
+
+    return jsonify({"categories": data, "meta": meta}), 200
 
 @category.route('/categories/<id>', methods=['GET'])
+@swag_from('/app/docs/categories/get_particular_category.yml')
 @token_required
 def get_particular_category(current_user, id):
     """for getting a particular category"""
@@ -66,6 +104,7 @@ def get_particular_category(current_user, id):
 
 
 @category.route('/categories/<id>', methods=['PUT'])
+@swag_from('/app/docs/categories/edit_category.yml')
 @token_required
 def edit_category(current_user, id):
     """For updating a particular category"""
@@ -80,7 +119,7 @@ def edit_category(current_user, id):
     try:
         data = category_schema.load(data)
 
-        title = data["title"]
+        title = data["title"].capitalize()
         description = data["description"]
 
         category.title = title
@@ -97,6 +136,7 @@ def edit_category(current_user, id):
 
 
 @category.route('/categories/<id>', methods=['DELETE'])
+@swag_from('/app/docs/categories/delete_category.yml')
 @token_required
 def delete_category(current_user, id):
     """Delete a particular category"""

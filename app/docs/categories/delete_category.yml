@@ -1,0 +1,17 @@
+tags:
+  - Categories
+summary: Delete a category
+parameters:
+  - in: path
+    name: id
+    required: true
+    type: integer
+    description: Delete a category by it's id
+security:
+  - TokenHeader: []
+responses:
+    200:
+      description:  category successfully deleted
+    404:
+      description: when a Category is not found
+      

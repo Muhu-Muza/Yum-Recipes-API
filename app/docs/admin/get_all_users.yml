@@ -1,0 +1,20 @@
+
+tags:
+  - Admin
+summary: Get all users
+parameters:
+  - in: query
+    name: page
+    type: integer
+    description: The page to be displayed
+  - in: query
+    name: per page
+    type: integer
+    description: The number of users to display per page
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description:  When users have been retrieved successfully
+  401:
+    description: When a user is not authorised to retrieve users

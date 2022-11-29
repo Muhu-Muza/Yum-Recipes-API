@@ -1,0 +1,38 @@
+tags:
+  - Recipes
+summary: Edit a recipe
+parameters:
+  - in: path
+    name: id
+    required: true
+    type: integer
+    description: the id of the recipe to be edited
+  - in: body
+    name: new recipe title
+    required: true
+    type: string
+    description: The new recipe title
+    example: Vegetable pie
+  - in: body
+    name: new recipe ingredients
+    required: true
+    type: string
+    ingredients: The new recipe ingredients
+    example: Cucumber, cabbage, lettuce
+  - in: body
+    name: new recipe instructions
+    required: true
+    type: string
+    instructions: The new recipe instructions
+    example: chop to tiny bits, sizzle with a little vinegar and serve
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description:  When a recipe is successfully edited
+  404:
+    description: when a recipe is not found
+  422:
+    description: When there is Validation error
+  400:
+    description: When there is no category

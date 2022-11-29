@@ -1,0 +1,30 @@
+tags:
+  - Categories
+summary: Edit a category
+parameters:
+  - in: path
+    name: id
+    required: true
+    type: integer
+    description: the id of the category to be edited
+  - in: body
+    name: new category title
+    required: true
+    type: string
+    description: The new category title
+    example: Vegan
+  - in: body
+    name: new category description
+    required: true
+    type: string
+    description: The new category description
+    example: For all vegan dishes
+security:
+  - TokenHeader: []
+responses:
+  200:
+    description:  When a category is successfully edited
+  404:
+    description: when a Category is not found
+  422:
+    description: When there is Validation error

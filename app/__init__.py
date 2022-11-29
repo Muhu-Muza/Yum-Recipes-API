@@ -5,6 +5,7 @@ from app.auth.views import user
 from app.categories.views import category
 from app.recipes.views import recipe
 from flask_migrate import Migrate
+from flasgger import Swagger
 
 
 def create_app():
@@ -19,6 +20,32 @@ def create_app():
     app.register_blueprint(category)
     app.register_blueprint(user)
     app.register_blueprint(recipe)
+
+    swagger = Swagger(app,
+                template={
+                    "swagger": "2.0",
+                    "info": {
+                        "title": "Recipes API",
+                        "description": """An API to keep track of food categories and recipes"""},
+                        "contact": {
+                            "name": "Muhumuza Ivan",
+                            "email": "schumannivangmail.com",
+                            "url": ""
+                        },
+                        "version": "1.0",
+                        "basePath": "",
+                        "schemes": [
+                            "http",
+                            "https"
+                        ],
+                        "securityDefinitions": {
+                            "Bearer": {
+                                "type": "apiKey",
+                                "name": "Authorization",
+                                "in": "header"
+                            }
+                        }
+                })
 
     return app
 
