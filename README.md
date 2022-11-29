@@ -52,7 +52,7 @@ A Flask API for the Yes-Recipes that handles:
   create a file with the .env extention within the root directory and paste the following lines of code   
   ```
   FLASK_DEBUG = 1   
-  FLASK APP = 1
+  FLASK APP = app
   ```   
   
   #### 4.  run the app:   
