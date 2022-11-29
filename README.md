@@ -55,7 +55,7 @@ A Flask API for the Yes-Recipes that handles:
   FLASK APP = app
   ```   
   
-  #### 4.  run the app:   
+  #### 5.  run the app:   
         
    ```  
    $ py run.py
@@ -64,5 +64,11 @@ A Flask API for the Yes-Recipes that handles:
    ```
    $ flask run
    ```   
+   #### 6. View the swagger UI documentation:   
+   After starting the server, paste this url in a browser of your choice    
+   ```
+   http://localhost:5000/apidocs
+   ```   
+   
   
    
