@@ -56,7 +56,7 @@ A Flask API for the Yes-Recipes that handles:
   ```   
   
   #### 4.  run the app:   
-   -       
+        
    ```  
    $ py run.py
    ```   
