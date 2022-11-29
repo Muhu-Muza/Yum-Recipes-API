@@ -46,17 +46,23 @@ A Flask API for the Yes-Recipes that handles:
     $ flask db migrate   
     $ flask db upgrade   
     
+   ```    
+  #### 4. Envirnoment variables:   
+  
+  create a file with the .env extention within the root directory and paste the following lines of code   
+  ```
+  FLASK_DEBUG = 1   
+  FLASK APP = app
+  ```   
+  
+  #### 4.  run the app:   
+        
+   ```  
+   $ py run.py
+   ```   
+   or   
    ```
-  #### 4. Set the envirnonment variables and run the app:   
-   - For windows :   
-   ```
-   $ set FLASK_DEBUG = 1   
    $ flask run
    ```   
-   - for mac or linux:   
-   ```   
-   $ export FLASK_DEBUG = 1   
-   $ flask run
-   ```
-   
+  
    
