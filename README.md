@@ -3,7 +3,6 @@
 A Flask API for the Yes-Recipes that handles:
 
   * User authentication
-  * Creating, reading, updating and deleting of Users
   * Creating, reading, updating and deleting of categories
   * Creating, reading, updating and deleting of recipes
   
