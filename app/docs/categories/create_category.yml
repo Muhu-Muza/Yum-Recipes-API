@@ -12,11 +12,13 @@ parameters:
       type: object
       example: {"title": "Tropical Cuisine", "description": "For dishes native to the tropics"}
 security:
-  - TokenHeader: []
+  - Bearer: []
 responses:
   201:
-    description: When a Category has been created successfully
+    description: Category has been created successfully
   409:
-    description: When a category already exists  
+    description: category already exists  
   422:
-    description: When there is Validation error
+    description: Validation error
+  401:
+    description: Unauthorised

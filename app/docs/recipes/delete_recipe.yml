@@ -13,12 +13,14 @@ parameters:
     type: integer
     description: Delete a recipe by it's id
 security:
-  - TokenHeader: []
+  - Bearer: []
 responses:
     200:
       description:  recipe successfully deleted
     404:
-      description: when a recipe is not found
+      description: recipe is not found
     400:
-      description: when no category
+      description: no category_id specified 
+    401:
+      description: Unauthorised
       

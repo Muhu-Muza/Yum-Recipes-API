@@ -26,13 +26,15 @@ parameters:
     instructions: The new recipe instructions
     example: chop to tiny bits, sizzle with a little vinegar and serve
 security:
-  - TokenHeader: []
+  - Bearer: []
 responses:
   200:
-    description:  When a recipe is successfully edited
+    description: recipe is successfully edited
   404:
-    description: when a recipe is not found
+    description: recipe is not found
   422:
-    description: When there is Validation error
+    description: Validation error
   400:
-    description: When there is no category
+    description: no category_id
+  401:
+    description: Unauthorised

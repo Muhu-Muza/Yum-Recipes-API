@@ -12,7 +12,7 @@ parameters:
     type: integer
     description: The number of users to display per page
 security:
-  - TokenHeader: []
+  - Bearer: []
 responses:
   200:
     description:  When users have been retrieved successfully

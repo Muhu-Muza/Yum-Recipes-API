@@ -8,10 +8,12 @@ parameters:
     type: integer
     description: Delete a category by it's id
 security:
-  - TokenHeader: []
+  - Bearer: []
 responses:
     200:
-      description:  category successfully deleted
+      description: category successfully deleted
     404:
-      description: when a Category is not found
+      description: Category is not found
+    401:
+      description: Unauthorised
       

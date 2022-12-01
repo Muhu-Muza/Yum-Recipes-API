@@ -16,9 +16,11 @@ parameters:
     type: integer
     description: The number of items to display per page
 security:
-  - TokenHeader: []
+  - Bearer: []
 responses:
   200:
-    description:  When a category has been got successfully
+    description: category has been got successfully
   404:
-    description: when a Category is not found
+    description: Category is not found
+  401:
+    description: Unauthorised

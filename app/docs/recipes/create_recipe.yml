@@ -19,13 +19,15 @@ parameters:
                 "ingredients": "Cucumber, cabbage, lettuce", 
                 "instructions": "chop to tiny bits, sizzle with a little vinegar and serve"}
 security:
-  - TokenHeader: []
+  - Bearer: []
 responses:
   201:
-    description: When a recipe has been created successfully
+    description: recipe has been created successfully
   409:
-    description: When a recipe name already exists  
+    description: recipe name already exists  
   422:
-    description: When there is Validation error
+    description: Validation error
   400:
-    description: When a category_id is not valid or no recipe data provided
+    description: category_id is not valid or no recipe data provided
+  401:
+    description: Unauthorised

@@ -32,7 +32,7 @@ def create_app():
                             "email": "schumannivangmail.com",
                             "url": ""
                         },
-                        "version": "1.0",
+                        "version": "1.0.0",
                         "basePath": "",
                         "schemes": [
                             "http",

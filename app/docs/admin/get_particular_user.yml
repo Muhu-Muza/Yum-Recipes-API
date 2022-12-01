@@ -9,11 +9,11 @@ parameters:
     type: integer
     description: the id of the user to be retrieved
 security:
-  - TokenHeader: []
+  - Bearer: []
 responses:
   200:
-    description:  when a user is successfully retrieved
+    description: user is successfully retrieved
   404:
-    description: when a user is not found
+    description: user is not found
   401:
-    description: When a user is not authorised to retrieve users
+    description: user is not authorised to retrieve users

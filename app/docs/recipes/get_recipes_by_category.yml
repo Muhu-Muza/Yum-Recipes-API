@@ -21,9 +21,11 @@ parameters:
     type: integer
     description: The number of items to display per page
 security:
-  - TokenHeader: []
+  - Bearer: []
 responses:
   200:
-    description:  When a recipe has been got successfully
+    description: recipe has been got successfully
   404:
-    description: when a recipe is not found
+    description: recipe is not found
+  401:
+    description: Unauthorised

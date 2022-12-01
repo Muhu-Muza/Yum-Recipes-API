@@ -20,11 +20,13 @@ parameters:
     description: The new category description
     example: For all vegan dishes
 security:
-  - TokenHeader: []
+  - Bearer: []
 responses:
   200:
-    description:  When a category is successfully edited
+    description: Category successfully edited
   404:
-    description: when a Category is not found
+    description: Category is not found
   422:
-    description: When there is Validation error
+    description: Validation error
+  401:
+    description: Unauthorised
