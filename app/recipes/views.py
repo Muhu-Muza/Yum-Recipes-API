@@ -18,18 +18,27 @@ def create_recipe(current_user, category_id):
     recipe_schema = RecipeSchema()
 
     if not data:
-        return {"message": "No Input data provided !"}, 400
+        return jsonify({"message": "No Input data provided !"}), 400
 
     try:    
         data = recipe_schema.load(data)
-  
+
+        title = data["title"].strip().capitalize()
+        ingredients = data["ingredients"].strip()
+        instructions = data["instructions"].strip()
+
+        if not title:
+            return jsonify({"message": "Data required !"}), 400
+
+        if not ingredients:
+            return jsonify({"message": "Data required !"}), 400
+
+        if not instructions:
+            return jsonify({"message": "Data required !"}), 400
+            
         category = Category.query.filter_by(user_id = current_user.id, id = category_id).first()
         if category:
-            title = data["title"].capitalize()
-            ingredients = data["ingredients"]
-            instructions = data["instructions"]
             category = category_id
-
             check_recipe = Recipe.query.filter_by(title = title).first()
             if not check_recipe:
                 new_recipe = Recipe(title = title, ingredients = ingredients, instructions = instructions, category = category)
@@ -98,7 +107,8 @@ def get_recipes_by_categories(current_user, category_id):
 @token_required
 def get_particular_recipe(current_user, id, category_id):
     """for getting a particular recipe"""
-    category = Category.query.filter_by(user_id = current_user.id, id = category_id)  
+
+    category = Category.query.filter_by(user_id = current_user.id, id = category_id).first()  
     if category:
         recipe = Recipe.query.filter_by(id = id, category = category_id).first()
 
@@ -130,9 +140,18 @@ def edit_recipe(current_user, id, category_id):
         try:
             data = recipe_schema.load(data)
 
-            title = data['title'].capitalize()
-            ingredients = data['ingredients']
-            instructions = data['instructions']
+            title = data['title'].strip().capitalize()
+            ingredients = data['ingredients'].strip()
+            instructions = data['instructions'].strip()
+
+            if not title:
+                return jsonify({"message": "Data required !"}), 400
+
+            if not ingredients:
+                return jsonify({"message": "Data required !"}), 400
+
+            if not instructions:
+                return jsonify({"message": "Data required !"}), 400 
 
             recipe.title = title
             recipe.ingredients = ingredients

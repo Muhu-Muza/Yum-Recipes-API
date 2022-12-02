@@ -22,3 +22,5 @@ responses:
     description: Validation error
   401:
     description: Unauthorised
+  400:
+    description: Invalid request

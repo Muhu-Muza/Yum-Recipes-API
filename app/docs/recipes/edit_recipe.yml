@@ -7,24 +7,15 @@ parameters:
     required: true
     type: integer
     description: the id of the recipe to be edited
-  - in: body
-    name: new recipe title
+  - name: body
+    in: body
     required: true
-    type: string
-    description: The new recipe title
-    example: Vegetable pie
-  - in: body
-    name: new recipe ingredients
-    required: true
-    type: string
-    ingredients: The new recipe ingredients
-    example: Cucumber, cabbage, lettuce
-  - in: body
-    name: new recipe instructions
-    required: true
-    type: string
-    instructions: The new recipe instructions
-    example: chop to tiny bits, sizzle with a little vinegar and serve
+    description: Accepts data input in json
+    schema:
+      type: object
+      example: {"title": "New title goes here",
+                "ingredients": "New ingredients go here", 
+                "instructions": "New instructions go here"}
 security:
   - Bearer: []
 responses:
@@ -35,6 +26,6 @@ responses:
   422:
     description: Validation error
   400:
-    description: no category_id
+    description: Invalid request
   401:
     description: Unauthorised

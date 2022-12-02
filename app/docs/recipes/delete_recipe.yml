@@ -20,7 +20,7 @@ responses:
     404:
       description: recipe is not found
     400:
-      description: no category_id specified 
+      description: Invalid request 
     401:
       description: Unauthorised
       

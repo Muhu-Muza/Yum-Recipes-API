@@ -43,7 +43,7 @@ class UserSchema(Schema):
     lastname = fields.Str(required = True, validate = validate.Length(min=3))
     username = fields.Str(required = True, validate = validate.Length(min=4))
     email = fields.Email(required = True, validate = validate.Email())
-    password = fields.Str(required = True, validate = validate.Length(min=5))
+    password = fields.Str(required = True, validate = validate.Length(min=8))
 
 class CategorySchema(Schema):
     id = fields.Int(dump_only = True)

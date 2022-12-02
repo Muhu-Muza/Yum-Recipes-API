@@ -7,18 +7,13 @@ parameters:
     required: true
     type: integer
     description: the id of the category to be edited
-  - in: body
-    name: new category title
+  - name: body
+    in: body
     required: true
-    type: string
-    description: The new category title
-    example: Vegan
-  - in: body
-    name: new category description
-    required: true
-    type: string
-    description: The new category description
-    example: For all vegan dishes
+    description: Accepts data input in json
+    schema:
+      type: object
+      example: {"title": "New title goes her", "description": "New description goes here"}
 security:
   - Bearer: []
 responses:
@@ -30,3 +25,5 @@ responses:
     description: Validation error
   401:
     description: Unauthorised
+  400:
+    description: Invalid request

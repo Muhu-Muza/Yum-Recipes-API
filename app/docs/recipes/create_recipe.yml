@@ -28,6 +28,6 @@ responses:
   422:
     description: Validation error
   400:
-    description: category_id is not valid or no recipe data provided
+    description: Invalid request
   401:
     description: Unauthorised

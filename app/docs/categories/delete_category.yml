@@ -16,4 +16,6 @@ responses:
       description: Category is not found
     401:
       description: Unauthorised
+    400:
+      description: Invalid request
       

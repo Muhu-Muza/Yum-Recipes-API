@@ -18,6 +18,9 @@ def create_category(current_user):
     data = request.get_json()
     category_schema = CategorySchema()
    
+    if not data:
+        return jsonify({"message": "No Input data provided !"}), 400
+
     title = data['title']
     category = Category.query.filter_by(user_id = current_user.id, title = title).first()
 
@@ -27,10 +30,18 @@ def create_category(current_user):
     try:
         data = category_schema.load(data)
 
+        title = data["title"].strip().capitalize()
+        description = data["description"].strip()
         user_id = current_user.id
+
+        if not title:
+            return jsonify({"message": "Data required !"}), 400
+
+        if not description:
+            return jsonify({"message": "Data required !"}), 400
    
-        new_category = Category(title = data['title'].capitalize(),
-                                description = data['description'],
+        new_category = Category(title = title,
+                                description = description,
                                 user_id = user_id
                                 )
         db.session.add(new_category)
@@ -61,14 +72,7 @@ def get_all_categories(current_user):
                 data = category_schema.dump(category)
 
                 return jsonify({"category": data}), 200
-            
-        # category = Category.query.filter_by(user_id = current_user.id, title = q).first()
-        # if category:
-        #     print("category1" , category)
-        #     category_schema = CategorySchema()
-        #     data = category_schema.dump(category)
-        #     return jsonify({"category": data})
-       
+
         else:
             return jsonify({"message": "Category not found ! Try a different spelling !"}), 404
 
@@ -116,11 +120,20 @@ def edit_category(current_user, id):
     data = request.get_json()
     category_schema = CategorySchema()
 
+    if not data:
+        return jsonify({"message": "No Input data provided !"}), 400
+
     try:
         data = category_schema.load(data)
 
-        title = data["title"].capitalize()
-        description = data["description"]
+        title = data["title"].strip().capitalize()
+        description = data["description"].strip()
+
+        if not title:
+            return jsonify({"message": "Data required !"}), 400
+
+        if not description:
+            return jsonify({"message": "Data required !"}), 400
 
         category.title = title
         category.description = description
