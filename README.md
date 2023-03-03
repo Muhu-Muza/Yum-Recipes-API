@@ -1,6 +1,6 @@
-# FLASK-API
+# YUM RECIPES FLASK-API
 
-A Flask API for the Yes-Recipes that handles:
+A Flask API for the Yum-Recipes that handles:
 
   * User authentication
   * Creating, reading, updating and deleting of categories
