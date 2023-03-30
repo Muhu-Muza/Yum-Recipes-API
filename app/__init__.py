@@ -25,7 +25,7 @@ def create_app():
                 template={
                     "swagger": "2.0",
                     "info": {
-                        "title": "Recipes API",
+                        "title": "Yum Recipes API",
                         "description": """An API to keep track of food categories and recipes"""},
                         "contact": {
                             "name": "Muhumuza Ivan",
